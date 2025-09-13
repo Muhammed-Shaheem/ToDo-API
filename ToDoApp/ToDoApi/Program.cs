@@ -34,7 +34,8 @@ builder.Services.AddAuthentication("Bearer")
 
     });
 
-
+builder.Services.AddHealthChecks()
+    .AddSqlServer(builder.Configuration.GetConnectionString("Default"));
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -50,5 +51,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health").AllowAnonymous();
 
 app.Run();
