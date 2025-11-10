@@ -6,7 +6,7 @@ namespace ToDoApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ToDisController : ControllerBase
+    public class ToDosController : ControllerBase
     {
         // GET: api/<ToDisController>
         [HttpGet]
@@ -30,7 +30,13 @@ namespace ToDoApi.Controllers
 
         // PUT api/<ToDisController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody] string value)
+        {
+        }
+        
+        // PUT api/<ToDisController>/5
+        [HttpPut("{id}/Complete")]
+        public void Complete(int id)
         {
         }
 

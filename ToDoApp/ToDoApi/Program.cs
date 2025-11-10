@@ -16,6 +16,8 @@ builder.Services.AddAuthorization(opts =>
     .RequireAuthenticatedUser()
     .Build();
 });
+builder.Services.AddHealthChecks()
+    .AddSqlServer(builder.Configuration.GetConnectionString("Default"));
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(opts =>
     {
@@ -34,8 +36,7 @@ builder.Services.AddAuthentication("Bearer")
 
     });
 
-builder.Services.AddHealthChecks()
-    .AddSqlServer(builder.Configuration.GetConnectionString("Default"));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
