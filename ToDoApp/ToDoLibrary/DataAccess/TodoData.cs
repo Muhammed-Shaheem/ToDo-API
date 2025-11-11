@@ -2,7 +2,7 @@
 
 namespace ToDoLibrary.DataAccess;
 
-public class TodoData
+public class TodoData : ITodoData
 {
     private readonly ISqlDataAccess sqlDataAccess;
 
@@ -30,17 +30,17 @@ public class TodoData
 
     public Task UpdateTask(string task, int assignedTo, int todoId)
     {
-       return  sqlDataAccess.SaveData<dynamic>("spTodos_UpdateTask", new { Task = task, Assignedto = assignedTo, TodoId = todoId }, "Default");
+        return sqlDataAccess.SaveData<dynamic>("spTodos_UpdateTask", new { Task = task, Assignedto = assignedTo, TodoId = todoId }, "Default");
     }
-    
+
     public Task CompleteTodo(int assignedTo, int todoId)
     {
-       return  sqlDataAccess.SaveData<dynamic>("spTodos_CompleteTodo", new { Assignedto = assignedTo, TodoId = todoId }, "Default");
+        return sqlDataAccess.SaveData<dynamic>("spTodos_CompleteTodo", new { Assignedto = assignedTo, TodoId = todoId }, "Default");
     }
-    
+
     public Task Delete(int assignedTo, int todoId)
     {
-       return  sqlDataAccess.SaveData<dynamic>("spTodos_Delete", new { Assignedto = assignedTo, TodoId = todoId }, "Default");
+        return sqlDataAccess.SaveData<dynamic>("spTodos_Delete", new { Assignedto = assignedTo, TodoId = todoId }, "Default");
     }
 
 
