@@ -13,6 +13,12 @@ public class TodoData
 
     public Task<List<TodoModel>> GetAllAssigned(int assignedTo)
     {
-      return  sqlDataAccess.LoadData<TodoModel, dynamic>("spTodos_GetAllAssigned", new {Assignedto = assignedTo},"Default");
+        return sqlDataAccess.LoadData<TodoModel, dynamic>("spTodos_GetAllAssigned", new { Assignedto = assignedTo }, "Default");
+    }
+
+    public async Task<TodoModel?> GetOneAssigned(int assignedTo, int id)
+    {
+        var todo = await sqlDataAccess.LoadData<TodoModel, dynamic>("spTodos_GetAllAssigned", new { Assignedto = assignedTo, Id = id }, "Default");
+        return todo.FirstOrDefault();
     }
 }
