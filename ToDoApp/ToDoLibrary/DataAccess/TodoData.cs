@@ -21,10 +21,15 @@ public class TodoData
         var todo = await sqlDataAccess.LoadData<TodoModel, dynamic>("spTodos_GetAllAssigned", new { Assignedto = assignedTo, Id = id }, "Default");
         return todo.FirstOrDefault();
     }
-    
+
     public async Task<TodoModel?> Create(string task, int assignedTo)
     {
-        var todo = await sqlDataAccess.LoadData<TodoModel, dynamic>("spTodos_Create", new { Assignedto = assignedTo, Task = task}, "Default");
+        var todo = await sqlDataAccess.LoadData<TodoModel, dynamic>("spTodos_Create", new { Assignedto = assignedTo, Task = task }, "Default");
         return todo.FirstOrDefault();
+    }
+
+    public Task UpdateTask(string task, int assignedTo, int todoId)
+    {
+       return  sqlDataAccess.SaveData<dynamic>("spTodos_UpdateTask", new { Task = task, Assignedto = assignedTo, TodoId = todoId }, "Default");
     }
 }
