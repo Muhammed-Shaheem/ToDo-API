@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using ToDoLibrary.DataAccess;
 using ToDoLibrary.Models;
 
@@ -29,9 +30,10 @@ namespace ToDoApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<TodoModel>> Get(int todoId)
         {
-            return "value";
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var output = await todoData.GetOneAssigned(int.Parse(userId),todoId);  
         }
 
         [HttpPost]
