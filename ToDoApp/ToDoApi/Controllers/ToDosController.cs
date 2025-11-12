@@ -1,4 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using ToDoLibrary.DataAccess;
+using ToDoLibrary.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,39 +11,44 @@ namespace ToDoApi.Controllers
     [ApiController]
     public class ToDosController : ControllerBase
     {
-        // GET: api/<ToDisController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly ITodoData todoData;
+
+        public ToDosController(ITodoData todoData)
         {
-            return new string[] { "value1", "value2" };
+            this.todoData = todoData;
         }
 
-        // GET api/<ToDisController>/5
+
+        [HttpGet]
+        public async Task<ActionResult<List<TodoModel>>> Get()
+        {
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var output = await todoData.GetAllAssigned(int.Parse(userId));
+
+            return Ok(output);
+        }
+
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<ToDisController>
         [HttpPost]
         public void Post([FromBody]string value)
         {
         }
 
-        // PUT api/<ToDisController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
         
-        // PUT api/<ToDisController>/5
         [HttpPut("{id}/Complete")]
         public void Complete(int id)
         {
         }
 
-        // DELETE api/<ToDisController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
