@@ -18,7 +18,7 @@ public class TodoData : ITodoData
 
     public async Task<TodoModel?> GetOneAssigned(int assignedTo, int id)
     {
-        var todo = await sqlDataAccess.LoadData<TodoModel, dynamic>("spTodos_GetAllAssigned", new { Assignedto = assignedTo, Id = id }, "Default");
+        var todo = await sqlDataAccess.LoadData<TodoModel, dynamic>("spTodos_GetOneAssigned", new { Assignedto = assignedTo, Id = id }, "Default");
         return todo.FirstOrDefault();
     }
 

@@ -27,12 +27,12 @@ public class SqlDataAccess : ISqlDataAccess
 
     }
 
-    public Task SaveData<P>(string sql, P parameters, string connectionStringName)
+    public async Task SaveData<P>(string sql, P parameters, string connectionStringName)
     {
         string? connectionString = configuration.GetConnectionString(connectionStringName);
         using IDbConnection connection = new SqlConnection(connectionString);
 
-        return connection.ExecuteAsync(sql, parameters, commandType: CommandType.StoredProcedure);
+         await connection.ExecuteAsync(sql, parameters, commandType: CommandType.StoredProcedure);
 
 
 

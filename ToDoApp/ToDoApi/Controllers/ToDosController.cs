@@ -13,47 +13,98 @@ namespace ToDoApi.Controllers
     public class ToDosController : ControllerBase
     {
         private readonly ITodoData todoData;
+        private readonly ILogger<ToDosController> logger;
 
-        public ToDosController(ITodoData todoData)
+        public ToDosController(ITodoData todoData, ILogger<ToDosController> logger.)
         {
             this.todoData = todoData;
+            this.logger = logger;
         }
-
+        private string? GetUserId()
+        {
+            return User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            
+        }
 
         [HttpGet]
         public async Task<ActionResult<List<TodoModel>>> Get()
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var output = await todoData.GetAllAssigned(int.Parse(userId));
+            logger.LogInformation("Get: api/Todos");
+            try
+            {
+                string? userId = GetUserId();
+                var output = await todoData.GetAllAssigned(int.Parse(userId));
 
-            return Ok(output);
+                return Ok(output);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "the Get call api/todos failed."); 
+                return BadRequest();
+            }
         }
 
-        [HttpGet("{id}")]
+     
+
+        [HttpGet("{todoId}")]
         public async Task<ActionResult<TodoModel>> Get(int todoId)
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var output = await todoData.GetOneAssigned(int.Parse(userId),todoId);  
+            logger.LogInformation("Get: api/Todos/{TodoId}",todoId);
+
+            try
+            {
+                var userId = GetUserId();
+                var output = await todoData.GetOneAssigned(int.Parse(userId), todoId);
+
+                return Ok(output);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "the Get call to {ApiPath} failed. The Id was {id}",$"api/Todos/Id",todoId);
+
+                return BadRequest();
+            }
         }
 
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<ActionResult<TodoModel>> Post([FromBody] string task)
         {
+            logger.LogInformation("Get: api/Todos (Task: {Task})",task);
+
+            try
+            {
+                var userId = GetUserId();
+                var output = await todoData.Create(task, int.Parse(userId));
+
+                return Ok(output);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "The POST call to api/Todos failed. task value was {task}", task);
+                return BadRequest();
+            }
+
         }
 
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{todoId}")]
+        public async Task<IActionResult> Put(int todoId, [FromBody] string task)
         {
-        }
-        
-        [HttpPut("{id}/Complete")]
-        public void Complete(int id)
-        {
+            await todoData.UpdateTask(task,int.Parse(GetUserId()), todoId);
+            return Ok();
         }
 
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPut("{todoId}/Complete")]
+        public async Task<IActionResult> Complete(int todoId)
         {
+          await todoData.CompleteTodo(int.Parse(GetUserId()), todoId);
+            return Ok();
+        }
+
+        [HttpDelete("{todoId}")]
+        public async Task<IActionResult> Delete(int todoId)
+        {
+            await todoData.Delete(int.Parse(GetUserId()), todoId);
+            return Ok();
         }
     }
 }
