@@ -15,7 +15,7 @@ namespace ToDoApi.Controllers
         private readonly ITodoData todoData;
         private readonly ILogger<ToDosController> logger;
 
-        public ToDosController(ITodoData todoData, ILogger<ToDosController> logger.)
+        public ToDosController(ITodoData todoData, ILogger<ToDosController> logger)
         {
             this.todoData = todoData;
             this.logger = logger;
@@ -89,22 +89,53 @@ namespace ToDoApi.Controllers
         [HttpPut("{todoId}")]
         public async Task<IActionResult> Put(int todoId, [FromBody] string task)
         {
-            await todoData.UpdateTask(task,int.Parse(GetUserId()), todoId);
-            return Ok();
+            logger.LogInformation("PUT: api/Todos/{TodoId} (Task{Task})", todoId, task);
+            try
+            {
+                await todoData.UpdateTask(task, int.Parse(GetUserId()), todoId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "the PUT call api/todos/{TodoId} failed. Task value was {Task}",todoId,task);
+                return BadRequest();
+            }
         }
 
         [HttpPut("{todoId}/Complete")]
         public async Task<IActionResult> Complete(int todoId)
         {
-          await todoData.CompleteTodo(int.Parse(GetUserId()), todoId);
-            return Ok();
+            logger.LogInformation("PUT: api/Todos/{TodoId}/Complete", todoId);
+
+            try
+            {
+                await todoData.CompleteTodo(int.Parse(GetUserId()), todoId);
+                return Ok();
+            }
+            catch (Exception ex )
+            {
+                logger.LogError(ex, "the PUT call api/todos/{TodoId}/Complete failed", todoId);
+
+                return BadRequest();
+            }
         }
 
         [HttpDelete("{todoId}")]
         public async Task<IActionResult> Delete(int todoId)
         {
-            await todoData.Delete(int.Parse(GetUserId()), todoId);
-            return Ok();
+            logger.LogInformation("DELETE: api/Todos/{TodoId}", todoId);
+
+            try
+            {
+                await todoData.Delete(int.Parse(GetUserId()), todoId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "the DELETE call api/todos/{TodoId} failed", todoId);
+
+                return BadRequest();
+            }
         }
     }
 }
